@@ -1,21 +1,24 @@
 const header = document.getElementById('header');
 
 
-let x = window.innerWidth / 2;
-let y = window.innerHeight / 2;
+function moveHeader(event) {
+  // Get the current mouse position
+  const mouseX = event.clientX;
+  const mouseY = event.clientY;
 
-function updatePosition(event) {
-  const dx = event.clientX - x;
-  const dy = event.clientY - y;
-  x -= dx * 0.009;
-  y -= dy * 0.009;
+  // Get the window width and height
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
 
-  // prevent the header from moving outside the boundaries of the page
-  x = Math.max(0, Math.min(x, window.innerWidth - header.offsetWidth));
-  y = Math.max(0, Math.min(y, window.innerHeight - header.offsetHeight));
+  // Calculate the new header position
+  let newX = windowWidth - mouseX;
+  let newY = windowHeight - mouseY;
 
-  header.style.top = y + 'px';
-  header.style.left = x + 'px';
+  // Smoothly move the header using CSS transitions
+  header.style.transition = 'all 0.2s ease-out';
+  header.style.top = `${newY}px`;
+  header.style.left = `${newX}px`;
 }
 
-window.addEventListener('mousemove', updatePosition)
+// Add an event listener to move the header when the mouse moves
+window.addEventListener('mousemove', moveHeader);
