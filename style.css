@@ -1,0 +1,18 @@
+#header {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+body {
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+}
+
+#content {
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+}
