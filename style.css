@@ -3,8 +3,18 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 50px;
   white-space: nowrap;
+}
+
+#subheaders {
+  position: absolute;
+  top: 35%;
+  left: 2%;
+  opacity: 0.8;
+}
+
+h3:hover {
+  opacity: 0.8;
 }
 
 body {
