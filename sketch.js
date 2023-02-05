@@ -3,9 +3,9 @@ let poseNet;
 let poses = [];
 
 function setup() {
-  createCanvas(640, 480);
+  createCanvas(windowWidth, windowHeight);
   video = createCapture({video:{facingMode:"environment"}});
-  video.size(width, height);
+  video.size(windowWidth, windowHeight);
 
   // Create a new poseNet method with a single detection
 poseNet = ml5.poseNet(video, modelReady);
