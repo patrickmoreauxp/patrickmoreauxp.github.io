@@ -1,70 +1,41 @@
+let detector;
+let poses;
 let video;
-let poseNet;
-let poses = [];
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  video = createCapture({video:{facingMode:"environment"}});
-  video.size(windowWidth, windowHeight);
-
-  // Create a new poseNet method with a single detection
-poseNet = ml5.poseNet(video, modelReady);
-  poseNet.on("pose", function(results) {
-    poses = results;
-    if (poses.length){
-      keypoints = poses[0]["pose"]["keypoints"]
-      const filteredKeypoints = keypoints.filter((kp) => ["rightWrist","leftWrist"].includes(kp.part) && kp.score > 0.9);
-      if (filteredKeypoints.length){
-      console.log(filteredKeypoints[0]["position"]["x"], filteredKeypoints[0]["position"]["y"]);
-    }
-    }
-  });
-  // Hide the video element, and just show the canvas
-  video.hide();
+createCanvas(windowWidth, windowHeight);
+video = createCapture({video:{facingMode:"environment"}});
+video.size(windowWidth, windowHeight);
+video.hide();
+// createButton('pose').mousePressed(getPoses);
 }
 
-function modelReady() {
-    console.log("Model Ready");
+const detectorConfig = {
+modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+};
+detector = await poseDetection.createDetector(
+poseDetection.SupportedModels.PoseNet,
+detectorConfig
+);
+getPoses();
+
+function getPoses() {
+poses =detector.estimatePoses(video.elt);
+setTimeout(getPoses, 0);
 }
 
 function draw() {
-  image(video, 0, 0, width, height);
-
-  // We can call both functions to draw all keypoints and the skeletons
-  drawKeypoints();
-  drawSkeleton();
+background(220);
+image(video, 0, 0);
+if (poses && poses.length > 0) {
+for (let kp of poses[0].keypoints) {
+const { x, y, score } = kp;
+if (score > 0.5) {
+fill(255);
+stroke(0);
+strokeWeight(4);
+circle(x, y, 16);
 }
-
-// A function to draw ellipses over the detected keypoints
-function drawKeypoints() {
-  // Loop through all the poses detected
-  for (let i = 0; i < poses.length; i += 1) {
-    // For each pose detected, loop through all the keypoints
-    const pose = poses[i].pose;
-    for (let j = 0; j < pose.keypoints.length; j += 1) {
-      // A keypoint is an object describing a body part (like rightArm or leftShoulder)
-      const keypoint = pose.keypoints[j];
-      // Only draw an ellipse is the pose probability is bigger than 0.2
-      if (keypoint.score > 0.2) {
-        fill(255, 0, 0);
-        noStroke();
-        ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
-      }
-    }
-  }
 }
-
-// A function to draw the skeletons
-function drawSkeleton() {
-  // Loop through all the skeletons detected
-  for (let i = 0; i < poses.length; i += 1) {
-    const skeleton = poses[i].skeleton;
-    // For every skeleton, loop through all body connections
-    for (let j = 0; j < skeleton.length; j += 1) {
-      const partA = skeleton[j][0];
-      const partB = skeleton[j][1];
-      stroke(255, 0, 0);
-      line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
-    }
-  }
+}
 }
