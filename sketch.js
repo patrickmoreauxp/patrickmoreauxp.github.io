@@ -1,41 +1,46 @@
-let detector;
-let poses;
-let video;
-
 function setup() {
-createCanvas(windowWidth, windowHeight);
-video = createCapture({video:{facingMode:"environment"}});
-video.size(windowWidth, windowHeight);
-video.hide();
-// createButton('pose').mousePressed(getPoses);
+  createCanvas(videoElement.width, videoElement.height);
 }
 
-const detectorConfig = {
-modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
-};
-detector = await poseDetection.createDetector(
-poseDetection.SupportedModels.PoseNet,
-detectorConfig
-);
-getPoses();
+async function runPoseDetection() {
+  const videoElement = document.getElementById("video");
+  videoElement.width = 720;
+  videoElement.height = 560;
+  const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
+  const mediaStream = await navigator.mediaDevices.getUserMedia({
+    audio: false,
+    video: {
+      // height: 560,
+      // width: 720,
+      facingMode: 'environment',
+    }
+  });
+  videoElement.srcObject = mediaStream;
+  const videoPromise = new Promise((resolve, reject) => {
+    videoElement.onloadedmetadata = () => resolve(videoElement);
+  });
+  const video = await videoPromise;
+  video.play();
 
-function getPoses() {
-poses =detector.estimatePoses(video.elt);
-setTimeout(getPoses, 0);
+  async function detectPoseInRealTime() {
+    let poses = await detector.estimatePoses(videoElement, { flipHorizontal: false });
+    clear();
+    if (poses.length) {
+      for (let i = 0; i < poses.length; i++) {
+        let pose = poses[i];
+        for (let j = 0; j < pose.keypoints.length; j++) {
+          let keypoint = pose.keypoints[j];
+          if (keypoint.score >= 0.2) {
+            fill(255, 0, 0);
+            noStroke();
+            circle(keypoint.x, keypoint.y, 10);
+          }
+        }
+      }
+    }
+    requestAnimationFrame(detectPoseInRealTime);
+  }
+  detectPoseInRealTime();
 }
 
-function draw() {
-background(220);
-image(video, 0, 0);
-if (poses && poses.length > 0) {
-for (let kp of poses[0].keypoints) {
-const { x, y, score } = kp;
-if (score > 0.5) {
-fill(255);
-stroke(0);
-strokeWeight(4);
-circle(x, y, 16);
-}
-}
-}
-}
+runPoseDetection();
