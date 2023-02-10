@@ -1,5 +1,5 @@
 function setup() {
-  createCanvas(videoElement.width, videoElement.height);
+  createCanvas(720, 560);
 }
 
 async function runPoseDetection() {
