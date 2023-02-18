@@ -1,17 +1,16 @@
 function setup() {
-  createCanvas(720, 560);
+  canvas = createCanvas(screen.width, screen.height);
+  canvas.position(0, 0);
 }
 
 async function runPoseDetection() {
   const videoElement = document.getElementById("video");
-  videoElement.width = 720;
-  videoElement.height = 560;
+  videoElement.width = screen.width;
+  videoElement.height = screen.height;
   const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
   const mediaStream = await navigator.mediaDevices.getUserMedia({
     audio: false,
     video: {
-      // height: 560,
-      // width: 720,
       facingMode: 'environment',
     }
   });
@@ -23,9 +22,11 @@ async function runPoseDetection() {
   video.play();
 
   async function detectPoseInRealTime() {
-    let poses = await detector.estimatePoses(videoElement, { flipHorizontal: false });
+    let poses = await detector.estimatePoses(videoElement, { flipHorizontal: true });
     clear();
     if (poses.length) {
+      let canvasScaleFactorX = width / videoElement.videoWidth;
+      let canvasScaleFactorY = height / videoElement.videoHeight;
       for (let i = 0; i < poses.length; i++) {
         let pose = poses[i];
         for (let j = 0; j < pose.keypoints.length; j++) {
@@ -33,7 +34,10 @@ async function runPoseDetection() {
           if (keypoint.score >= 0.2) {
             fill(255, 0, 0);
             noStroke();
-            circle(keypoint.x, keypoint.y, 10);
+            // Adjust the position of the keypoint based on the video element's offset and the canvas scale factor
+            let adjustedX = (keypoint.x - videoElement.offsetLeft) * canvasScaleFactorX;
+            let adjustedY = (keypoint.y - videoElement.offsetTop) * canvasScaleFactorY;
+            circle(adjustedX, adjustedY, 10);
           }
         }
       }
@@ -44,3 +48,5 @@ async function runPoseDetection() {
 }
 
 runPoseDetection();
+
+
