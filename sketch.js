@@ -1,12 +1,12 @@
 function setup() {
-  canvas = createCanvas(screen.width, screen.height);
+  canvas = createCanvas(1200, 800);
   canvas.position(0, 0);
 }
 
 async function runPoseDetection() {
   const videoElement = document.getElementById("video");
-  videoElement.width = screen.width;
-  videoElement.height = screen.height;
+  videoElement.width = 1200;
+  videoElement.height = 800;
   const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
   const mediaStream = await navigator.mediaDevices.getUserMedia({
     audio: false,
