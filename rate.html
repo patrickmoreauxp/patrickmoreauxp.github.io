@@ -1,26 +1,28 @@
-<html>
-
 <head>
   <meta charset="UTF-8">
   <title>Rate Detection</title>
-	<!-- Require the peer dependencies of pose-detection. -->
-	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+  <!-- Require the peer dependencies of pose-detection. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
 
-	<!-- You must explicitly require a TF.js backend if you're not using the TF.js union bundle. -->
-	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
-	<!-- Alternatively you can use the WASM backend: <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js"></script> -->
+  <!-- You must explicitly require a TF.js backend if you're not using the TF.js union bundle. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+  <!-- Alternatively you can use the WASM backend: <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm/dist/tf-backend-wasm.js"></script> -->
 
-	<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
     <style>
   #video-container {
     position: relative;
+    width: 100%;
+    height: 100%;
   }
 
   #video {
     z-index: 1;
+    width: 100%;
+    height: 100%;
   }
 
   canvas {
@@ -29,19 +31,12 @@
     left: 0;
     z-index: 2;
   }
-
-  @media only screen and (max-width: 900px) {
-    #video {
-      width: 200%;
-      height: auto;
-    }
-  }
 </style>
 </head>
 
 <body>
   <div id="video-container">
-    <video id="video" width="720" height="560" autoplay></video>
+    <video id="video" autoplay></video>
   </div>
   <br><br><br>
   <script src="sketch.js"></script>
